@@ -42,7 +42,7 @@ async function deleteAdminUsers(times = 2) {
   for (let i = 0; i < times; i++) {
     const btn_trash_list = await driver.findElements(
       By.xpath(
-        '(//button[@class="oxd-icon-button oxd-table-cell-action-space"]//i[@class="oxd-icon bi-trash"])'
+        '(//button[@class="oxd-icon-button oxd-table-cell-action-space"]//i[@class="oxd-icon bi-trash"])[2]'
       )
     );
     if (btn_trash_list.length === 0) {
@@ -114,7 +114,7 @@ describe("Heroku App Test", function () {
     await driver.sleep(2000);
   });
 
-  it("Delete Admin Positive", async function () {
+  it("Delete Admin", async function () {
     await driver.get(URL_ORANGE);
     await driver.sleep(2000);
     await login(process.env.USERNAME_ORANGE, process.env.PASSWORD_ORANGE);
@@ -122,7 +122,7 @@ describe("Heroku App Test", function () {
     await deleteAdminUsers(2);
   });
 
-  it("Delete Admin Negative", async function () {
+  it("Delete Other Admin", async function () {
     await driver.get(URL_ORANGE);
     await driver.sleep(2000);
     await login(process.env.USERNAME_ORANGE, process.env.PASSWORD_ORANGE);
