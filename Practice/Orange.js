@@ -40,29 +40,30 @@ async function goToAdminMenu() {
 
 async function deleteAdminUsers(times = 2) {
   for (let i = 0; i < times; i++) {
-    const btn_trash_list = await driver.findElements(
-      By.xpath(
-        '(//button[@class="oxd-icon-button oxd-table-cell-action-space"]//i[@class="oxd-icon bi-trash"])[2]'
-      )
+    const row_list = await driver.findElements(
+      By.xpath('//div[@class="oxd-table-body"]/div')
     );
-    if (btn_trash_list.length === 0) {
+
+    if (row_list.length === 0) {
       console.log("Data sudah habis");
       break;
     }
-    const btn_trash = btn_trash_list[0];
+    const row = row_list[0];
+    const btn_trash = await row.findElement(
+      By.xpath(
+        './/button[@class="oxd-icon-button oxd-table-cell-action-space"]'
+      )
+    );
     await driver.wait(until.elementIsVisible(btn_trash), 2000);
     await btn_trash.click();
     await driver.sleep(1500);
-
     const btn_delete = await driver.findElement(
-      By.xpath(
-        '//button[@class="oxd-button oxd-button--medium oxd-button--label-danger orangehrm-button-margin"]'
-      )
+      By.xpath('//button[contains(@class,"oxd-button--label-danger")]')
     );
     await driver.wait(until.elementIsVisible(btn_delete), 2000);
     await btn_delete.click();
     await driver.sleep(1500);
-    expect(btn_trash).to.exist;
+
     console.log("Data berhasil dihapus");
   }
 }
@@ -88,6 +89,15 @@ describe("Heroku App Test", function () {
     );
     await driver.wait(until.elementIsVisible(dashboard), 2000);
     expect(await dashboard.getText()).to.equal("Dashboard");
+  });
+
+  it("Login Admin Negative", async function () {
+    await login(process.env.USERNAME_ORANGE, process.env.ORANGE_PASSWORD);
+    const invalid = await driver.findElement(
+      By.xpath('//div[@class="oxd-alert oxd-alert--error"]')
+    );
+    expect(await invalid.getText()).to.equal("Invalid credentials");
+    console.log("Login gagal, username atau password salah");
   });
 
   it("Login Logout", async function () {
